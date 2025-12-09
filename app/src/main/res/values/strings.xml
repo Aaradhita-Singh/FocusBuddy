@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">focusbuddyhelper</string>
+    <string name="accessibility_description">
+    FocusBuddy needs this permission to automatically block chosen apps when opened.
+</string>
+
+</resources>
