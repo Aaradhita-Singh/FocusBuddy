@@ -10,22 +10,25 @@ class FocusAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
 
-        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+        if (event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
 
-            val pkg = event.packageName?.toString() ?: return
-            Log.d("FOCUS_ACC", "Detected foreground: $pkg")
+        val packageName = event.packageName?.toString() ?: return
 
-            val blockedApps = FocusSettings.blockedApps
+        val prefs = getSharedPreferences("focus_prefs", MODE_PRIVATE)
+        val blockedApps =
+            prefs.getStringSet("blocked_apps", emptySet()) ?: emptySet()
 
-            if (pkg in blockedApps) {
-                Log.d("FOCUS_ACC", "BLOCKED → redirecting")
-
-                val intent = Intent(this, BlockedActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
+        if (blockedApps.contains(packageName)) {
+            launchBlockScreen()
         }
     }
+    private fun launchBlockScreen() {
+        val intent = Intent(this, BlockedActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+
+
 
     override fun onInterrupt() {}
 }

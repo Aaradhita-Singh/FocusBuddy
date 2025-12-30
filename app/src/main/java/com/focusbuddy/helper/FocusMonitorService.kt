@@ -1,23 +1,18 @@
 package com.focusbuddy.helper
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.util.Log
 
 class FocusMonitorService : Service() {
 
     private lateinit var usageStats: UsageStatsManager
     private val handler = Handler(Looper.getMainLooper())
+    private var monitorRunnable: Runnable? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -29,66 +24,41 @@ class FocusMonitorService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    private fun startForegroundServiceNotification() {
-        Log.d("FOCUS_DEBUG", "Starting foreground notification")
-
-        val channelId = "focus_monitor_channel"
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Focus Monitor",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
-        }
-
-        val notification = Notification.Builder(this, channelId)
-            .setContentTitle("FocusBuddy is monitoring apps")
-            .setContentText("Blocking distractions")
-            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .build()
-
-        startForeground(1, notification)
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("FOCUS_DEBUG", "onStartCommand CALLED")
-
-        // 🔥 Store in global settings instead of local variables
-        FocusSettings.blockedApps =
-            intent?.getStringArrayListExtra("blockedApps") ?: emptyList()
-
-        FocusSettings.customMessage =
-            intent?.getStringExtra("message") ?: "Stay focused!"
-
-        Log.d("FOCUS_DEBUG", "Blocked apps = ${FocusSettings.blockedApps}")
-        Log.d("FOCUS_DEBUG", "Message = ${FocusSettings.customMessage}")
-
         startMonitoringLoop()
-
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     private fun startMonitoringLoop() {
         Log.d("FOCUS_DEBUG", "Monitoring loop started")
 
-        val runnable = object : Runnable {
+        monitorRunnable = object : Runnable {
             override fun run() {
+
+                val prefs = getSharedPreferences("focus_prefs", MODE_PRIVATE)
+                val blockedApps =
+                    prefs.getStringSet("blocked_apps", emptySet()) ?: emptySet()
+
+                // ✅ If no apps are blocked, STOP EVERYTHING
+                if (blockedApps.isEmpty()) {
+                    Log.d("FOCUS_DEBUG", "No blocked apps — stopping service")
+                    stopSelf()
+                    return
+                }
+
                 checkForegroundApp()
                 handler.postDelayed(this, 700)
             }
         }
 
-        handler.post(runnable)
+        handler.post(monitorRunnable!!)
     }
 
     private fun checkForegroundApp() {
         val current = getForegroundApp()
-
         Log.d("FOCUS_DEBUG", "Foreground app detected: $current")
-        // No launching — AccessibilityService handles blocking
+        // AccessibilityService handles blocking
     }
 
     private fun getForegroundApp(): String? {
@@ -96,9 +66,8 @@ class FocusMonitorService : Service() {
             val end = System.currentTimeMillis()
             val begin = end - 2000
 
-            val events = usageStats.queryEvents(begin, end) ?: return null
+            val events = usageStats.queryEvents(begin, end)
             val event = UsageEvents.Event()
-
             var lastPackage: String? = null
 
             while (events.hasNextEvent()) {
@@ -115,4 +84,34 @@ class FocusMonitorService : Service() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("FOCUS_DEBUG", "Service DESTROYED")
+
+        monitorRunnable?.let {
+            handler.removeCallbacks(it)
+        }
+    }
+
+    private fun startForegroundServiceNotification() {
+        val channelId = "focus_monitor_channel"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Focus Monitor",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            getSystemService(NotificationManager::class.java)
+                .createNotificationChannel(channel)
+        }
+
+        val notification = Notification.Builder(this, channelId)
+            .setContentTitle("FocusBuddy is monitoring apps")
+            .setContentText("Blocking distractions")
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+            .build()
+
+        startForeground(1, notification)
+    }
 }
