@@ -80,9 +80,6 @@
             android:name=".AppListActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".CustomMessageActivity"
-            android:exported="false" />
 
         <activity
             android:name=".BlockedActivity"

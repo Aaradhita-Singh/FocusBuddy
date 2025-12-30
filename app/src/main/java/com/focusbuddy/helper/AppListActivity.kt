@@ -5,9 +5,25 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 
 class AppListActivity : AppCompatActivity() {
+    private fun saveSelectedApps(apps: List<String>) {
+        val prefs = getSharedPreferences("focus_prefs", MODE_PRIVATE)
+        prefs.edit()
+            .putStringSet("blocked apps", apps.toSet())
+            .apply()
+    }
 
+    private fun startFocusService(apps: List<String>) {
+        val intent = Intent(this, FocusMonitorService::class.java)
+        intent.putStringArrayListExtra("blockedApps", ArrayList(apps))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            startForegroundService(intent)}
+        else {
+            startService(intent)
+        }
+    }
 
 
     private lateinit var saveButton: Button
@@ -26,11 +42,11 @@ class AppListActivity : AppCompatActivity() {
 
         saveButton.setOnClickListener {
             val selectedApps = adapter.getSelectedApps()
-
             if (selectedApps.isNotEmpty()) {
-                SelectedAppsHolder.selected = selectedApps
-                startActivity(Intent(this, CustomMessageActivity::class.java))
+                saveSelectedApps(selectedApps)
+                startFocusService(selectedApps)
             }
+
         }
     }
 }
