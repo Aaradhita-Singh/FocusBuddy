@@ -13,15 +13,22 @@ import android.widget.TextView
 class AppListAdapter(private val context: Context) : BaseAdapter() {
 
     private val pm = context.packageManager
+    private val prefs = context.getSharedPreferences("focus_prefs", Context.MODE_PRIVATE)
 
-    // Show all launchable apps
+    // Load previously saved apps
+    private val selected = prefs
+        .getStringSet("blocked_apps", emptySet())
+        ?.toMutableSet() ?: mutableSetOf()
+
+    // Load + sort apps (selected first)
     private val apps: List<ApplicationInfo> =
-        pm.getInstalledApplications(0).filter {
-            pm.getLaunchIntentForPackage(it.packageName) != null
-        }
-
-    // Store selection state safely
-    private val selected = mutableSetOf<String>()
+        pm.getInstalledApplications(0)
+            .filter { pm.getLaunchIntentForPackage(it.packageName) != null }
+            .sortedWith(compareByDescending<ApplicationInfo> {
+                selected.contains(it.packageName)
+            }.thenBy {
+                pm.getApplicationLabel(it).toString().lowercase()
+            })
 
     override fun getCount(): Int = apps.size
     override fun getItem(position: Int): Any = apps[position]
@@ -37,11 +44,13 @@ class AppListAdapter(private val context: Context) : BaseAdapter() {
 
         val app = apps[position]
 
-        // Set icon + name
         icon.setImageDrawable(pm.getApplicationIcon(app.packageName))
         name.text = pm.getApplicationLabel(app)
+
+        // 🔥 Prevent recycled listener bug
         checkBox.setOnCheckedChangeListener(null)
         checkBox.isChecked = selected.contains(app.packageName)
+
         checkBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 selected.add(app.packageName)
