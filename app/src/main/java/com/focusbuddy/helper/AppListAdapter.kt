@@ -20,15 +20,20 @@ class AppListAdapter(private val context: Context) : BaseAdapter() {
         .getStringSet("blocked_apps", emptySet())
         ?.toMutableSet() ?: mutableSetOf()
 
-    // Load + sort apps (selected first)
+    // Load + sort apps (selected first, exclude FocusBuddy)
     private val apps: List<ApplicationInfo> =
         pm.getInstalledApplications(0)
-            .filter { pm.getLaunchIntentForPackage(it.packageName) != null }
-            .sortedWith(compareByDescending<ApplicationInfo> {
-                selected.contains(it.packageName)
-            }.thenBy {
-                pm.getApplicationLabel(it).toString().lowercase()
-            })
+            .filter {
+                pm.getLaunchIntentForPackage(it.packageName) != null &&
+                        it.packageName != context.packageName   // 🚫 exclude FocusBuddy
+            }
+            .sortedWith(
+                compareByDescending<ApplicationInfo> {
+                    selected.contains(it.packageName)
+                }.thenBy {
+                    pm.getApplicationLabel(it).toString().lowercase()
+                }
+            )
 
     override fun getCount(): Int = apps.size
     override fun getItem(position: Int): Any = apps[position]
@@ -47,7 +52,7 @@ class AppListAdapter(private val context: Context) : BaseAdapter() {
         icon.setImageDrawable(pm.getApplicationIcon(app.packageName))
         name.text = pm.getApplicationLabel(app)
 
-        // 🔥 Prevent recycled listener bug
+        // 🔥 Fix recycled checkbox bug
         checkBox.setOnCheckedChangeListener(null)
         checkBox.isChecked = selected.contains(app.packageName)
 

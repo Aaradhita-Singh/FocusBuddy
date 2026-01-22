@@ -48,7 +48,6 @@ class MainActivity : ComponentActivity() {
         // 1. Clear saved apps
         prefs.edit().remove("blocked_apps").apply()
 
-        // 2. STOP THE SERVICE 🔥
         stopService(Intent(this, FocusMonitorService::class.java))
 
         Toast.makeText(
@@ -64,7 +63,6 @@ fun MainScreen(
     onResetClick: () -> Unit,
     onChooseAppsClick: () -> Unit
 ) {
-    // Gradient colors similar to BlockedActivity
     val gradientStart = Color(0xFFFFA27C)
     val gradientEnd = Color(0xFF2575FC)
 
@@ -96,7 +94,7 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "The tool to block distractions",
+                text = "",
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color.White.copy(alpha = 0.9f),
                 textAlign = TextAlign.Center
