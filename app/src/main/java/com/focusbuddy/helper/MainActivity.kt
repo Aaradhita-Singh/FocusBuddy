@@ -2,7 +2,6 @@ package com.focusbuddy.helper
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -14,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -22,123 +20,79 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            MainScreen(
-                onResetClick = { resetSavedApps() },
-                onChooseAppsClick = {
+            EntryScreen(
+                onLoginClick = {
+                    startActivity(Intent(this, LoginActivity::class.java))
+                },
+                onSignupClick = {
+                    startActivity(Intent(this, SignupActivity::class.java))
+                },
+                onGuestClick = {
                     startActivity(Intent(this, AppListActivity::class.java))
                 }
             )
         }
     }
-
-    private fun resetSavedApps() {
-        val prefs = getSharedPreferences("focus_prefs", MODE_PRIVATE)
-        val savedApps = prefs.getStringSet("blocked_apps", emptySet())
-
-        if (savedApps.isNullOrEmpty()) {
-            Toast.makeText(
-                this,
-                "No apps are currently selected.",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-
-        // 1. Clear saved apps
-        prefs.edit().remove("blocked_apps").apply()
-
-        stopService(Intent(this, FocusMonitorService::class.java))
-
-        Toast.makeText(
-            this,
-            "Blocked apps have been reset.",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
 }
-
 @Composable
-fun MainScreen(
-    onResetClick: () -> Unit,
-    onChooseAppsClick: () -> Unit
+fun EntryScreen(
+    onLoginClick: () -> Unit,
+    onSignupClick: () -> Unit,
+    onGuestClick: () -> Unit
 ) {
-    val gradientStart = Color(0xFFFFA27C)
-    val gradientEnd = Color(0xFF2575FC)
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    val gradient = Brush.verticalGradient(
+        colors = listOf(Color(0xFFFFA27C), Color(0xFF2575FC))
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(gradient),
+        contentAlignment = Alignment.Center
     ) {
+
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(gradientStart, gradientEnd)
-                    )
-                )
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Text(
-                text = "FocusBuddy",
-                style = MaterialTheme.typography.displayMedium,
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                text = "FOCUSBUDDY",
+                fontSize = 40.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White
             )
+
+            Spacer(modifier = Modifier.height(60.dp))
+
+            Button(
+                onClick = onLoginClick,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(55.dp)
+            ) {
+                Text("LOG IN", fontSize = 18.sp)
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.White.copy(alpha = 0.9f),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(64.dp))
-
-            // Choose Apps Button
             Button(
-                onClick = onChooseAppsClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = gradientEnd
-                ),
-                shape = MaterialTheme.shapes.medium,
+                onClick = onSignupClick,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
+                    .fillMaxWidth(0.7f)
+                    .height(55.dp)
             ) {
-                Text(
-                    text = "Choose Apps",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Text("CREATE ACCOUNT", fontSize = 18.sp)
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Reset Button
-            Button(
-                onClick = onResetClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White.copy(alpha = 0.3f),
-                    contentColor = Color.White
-                ),
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
+            TextButton(onClick = onGuestClick) {
                 Text(
-                    text = "Reset Selections",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    "Continue as Guest",
+                    color = Color.White
                 )
             }
         }
