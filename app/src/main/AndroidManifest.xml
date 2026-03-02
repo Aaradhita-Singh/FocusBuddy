@@ -80,7 +80,8 @@
             android:name=".AppListActivity"
             android:exported="false" />
 
-
+        <activity
+            android:name=".LoginActivity" />
         <activity
             android:name=".BlockedActivity"
             android:exported="false"

@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-class MainActivity : ComponentActivity() {
+class SelectScreen : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        // 1. Clear saved apps
+
         prefs.edit().remove("blocked_apps").apply()
 
         stopService(Intent(this, FocusMonitorService::class.java))
