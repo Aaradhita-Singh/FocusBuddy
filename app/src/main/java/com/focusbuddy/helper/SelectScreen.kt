@@ -102,7 +102,6 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(64.dp))
 
-            // Choose Apps Button
             Button(
                 onClick = onChooseAppsClick,
                 colors = ButtonDefaults.buttonColors(
@@ -123,7 +122,6 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Reset Button
             Button(
                 onClick = onResetClick,
                 colors = ButtonDefaults.buttonColors(
