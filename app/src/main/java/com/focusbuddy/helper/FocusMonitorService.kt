@@ -35,18 +35,56 @@ class FocusMonitorService : Service() {
 
         monitorRunnable = object : Runnable {
             override fun run() {
+                val prefs = getSharedPreferences(
+                    "focus_prefs",
+                    MODE_PRIVATE
+                )
 
-                val prefs = getSharedPreferences("focus_prefs", MODE_PRIVATE)
                 val blockedApps =
-                    prefs.getStringSet("blocked_apps", emptySet()) ?: emptySet()
+                    prefs.getStringSet(
+                        "blocked_apps",
+                        emptySet()
+                    ) ?: emptySet()
 
-                // ✅ If no apps are blocked, STOP EVERYTHING
                 if (blockedApps.isEmpty()) {
-                    Log.d("FOCUS_DEBUG", "No blocked apps — stopping service")
+                    Log.d(
+                        "FOCUS_DEBUG",
+                        "No blocked apps — stopping service"
+                    )
+
                     stopSelf()
                     return
                 }
 
+// Check timer
+                val endTime =
+                    prefs.getLong(
+                        "focus_end_time",
+                        0L
+                    )
+
+                if (
+                    endTime > 0 &&
+                    System.currentTimeMillis() >= endTime
+                ) {
+
+                    Log.d(
+                        "FOCUS_DEBUG",
+                        "Focus timer finished!"
+                    )
+
+                    prefs.edit()
+                        .remove("blocked_apps")
+                        .remove("focus_end_time")
+                        .apply()
+
+                    stopSelf()
+                    return
+                }
+
+                checkForegroundApp()
+
+                handler.postDelayed(this, 700)
                 checkForegroundApp()
                 handler.postDelayed(this, 700)
             }
