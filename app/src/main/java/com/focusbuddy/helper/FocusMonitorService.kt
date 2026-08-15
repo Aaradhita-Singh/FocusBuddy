@@ -14,6 +14,33 @@ class FocusMonitorService : Service() {
     private val handler = Handler(Looper.getMainLooper())
     private var monitorRunnable: Runnable? = null
 
+    private fun sendTimerFinishedNotification() {
+        val channelId = "focus_timer_channel"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Focus Timer",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            getSystemService(NotificationManager::class.java)
+                .createNotificationChannel(channel)
+        }
+
+        val notification = Notification.Builder(this, channelId)
+            .setContentTitle("Great job!")
+            .setContentText("Your timer is finished. Your selected apps are unlocked.")
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+            .setAutoCancel(true)
+            .build()
+
+        val notificationManager =
+            getSystemService(NotificationManager::class.java)
+
+        notificationManager.notify(2, notification)
+    }
+
     override fun onCreate() {
         super.onCreate()
         Log.d("FOCUS_DEBUG", "Service CREATED")
@@ -73,10 +100,14 @@ class FocusMonitorService : Service() {
                         "Focus timer finished!"
                     )
 
+                    // Unlock apps
                     prefs.edit()
                         .remove("blocked_apps")
                         .remove("focus_end_time")
                         .apply()
+
+                    // Tell the user
+                    sendTimerFinishedNotification()
 
                     stopSelf()
                     return
