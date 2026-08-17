@@ -17,8 +17,11 @@ FocusBuddy is an app that can:
 ## Implementation
 This repo contains all the needed code for the app. Just copy it all into a new project in Android Studio! 
 
-However, there are some things you need to do on your phone, so it runs properly. You need to have:
+However, there a few prerequisites: 
+### Device Prerequisites
 + Dev Mode on
 + Accessibility allowances on
-+ 
++ Notification allowances on for FocusBuddy
 
+## How to Use
+The app is simple to use. There's two buttons on the homepage
