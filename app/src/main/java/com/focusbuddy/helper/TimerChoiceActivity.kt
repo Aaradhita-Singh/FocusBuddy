@@ -29,17 +29,6 @@ class TimerChoiceActivity : AppCompatActivity() {
         noButton.setOnClickListener {
 
             startFocusSession()
-
-            val home = Intent(
-                this,
-                MainActivity::class.java
-            )
-
-            home.flags =
-                Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                        Intent.FLAG_ACTIVITY_NEW_TASK
-
-            startActivity(home)
             finish()
         }
     }

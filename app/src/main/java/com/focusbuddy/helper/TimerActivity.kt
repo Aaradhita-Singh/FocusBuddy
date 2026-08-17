@@ -14,35 +14,50 @@ class TimerActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_timer)
 
-        val hourPicker = findViewById<NumberPicker>(R.id.hourPicker)
-        val minutePicker = findViewById<NumberPicker>(R.id.minutePicker)
-        val secondPicker = findViewById<NumberPicker>(R.id.secondPicker)
+        val hourPicker =
+            findViewById<NumberPicker>(R.id.hourPicker)
 
-        val startButton = findViewById<Button>(R.id.startButton)
+        val minutePicker =
+            findViewById<NumberPicker>(R.id.minutePicker)
 
-        // Hours: 0–5
+        val secondPicker =
+            findViewById<NumberPicker>(R.id.secondPicker)
+
+        val startButton =
+            findViewById<Button>(R.id.startButton)
+
+        // HOURS: 0–5
         hourPicker.minValue = 0
         hourPicker.maxValue = 5
         hourPicker.value = 0
 
-        // Minutes: 0–59
+        // MINUTES: 0–59
         minutePicker.minValue = 0
         minutePicker.maxValue = 59
         minutePicker.value = 25
 
-        // Seconds: 0–59
+        // SECONDS: 0–59
         secondPicker.minValue = 0
         secondPicker.maxValue = 59
         secondPicker.value = 0
 
         startButton.setOnClickListener {
 
-            val hours = hourPicker.value
-            val minutes = minutePicker.value
-            val seconds = secondPicker.value
+            val hours =
+                hourPicker.value
 
-            // Don't allow a 00:00:00 timer
-            if (hours == 0 && minutes == 0 && seconds == 0) {
+            val minutes =
+                minutePicker.value
+
+            val seconds =
+                secondPicker.value
+
+            if (
+                hours == 0 &&
+                minutes == 0 &&
+                seconds == 0
+            ) {
+
                 Toast.makeText(
                     this,
                     "Please set a timer longer than 0 seconds.",
@@ -52,31 +67,38 @@ class TimerActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Convert everything to milliseconds
             val totalMilliseconds =
                 (hours * 60 * 60 * 1000L) +
                         (minutes * 60 * 1000L) +
                         (seconds * 1000L)
 
             val endTime =
-                System.currentTimeMillis() + totalMilliseconds
+                System.currentTimeMillis() +
+                        totalMilliseconds
 
-            val prefs = getSharedPreferences(
-                "focus_prefs",
-                MODE_PRIVATE
-            )
+            val prefs =
+                getSharedPreferences(
+                    "focus_prefs",
+                    MODE_PRIVATE
+                )
 
             prefs.edit()
-                .putLong("focus_end_time", endTime)
+                .putLong(
+                    "focus_end_time",
+                    endTime
+                )
                 .apply()
 
-            // Start FocusMonitorService
-            val serviceIntent = Intent(
-                this,
-                FocusMonitorService::class.java
-            )
+            // Start blocking
+            val serviceIntent =
+                Intent(
+                    this,
+                    FocusMonitorService::class.java
+                )
 
-            startForegroundService(serviceIntent)
+            startForegroundService(
+                serviceIntent
+            )
 
             Toast.makeText(
                 this,
@@ -84,17 +106,27 @@ class TimerActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
 
-            // Return to home screen
-            val home = Intent(
-                this,
-                MainActivity::class.java
-            )
+            /*
+             * Return to the ORIGINAL MainActivity.
+             *
+             * CLEAR_TOP removes TimerActivity,
+             * TimerChoiceActivity, etc.
+             *
+             * SINGLE_TOP prevents Android from
+             * creating a second MainActivity.
+             */
+            val home =
+                Intent(
+                    this,
+                    MainActivity::class.java
+                )
 
             home.flags =
                 Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                        Intent.FLAG_ACTIVITY_NEW_TASK
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
 
             startActivity(home)
+
             finish()
         }
     }

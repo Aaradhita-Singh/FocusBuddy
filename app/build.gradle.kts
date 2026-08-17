@@ -42,6 +42,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.biometric:biometric-compose:1.4.0-alpha07")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation(libs.androidx.core.ktx)

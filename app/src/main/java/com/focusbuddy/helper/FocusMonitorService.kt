@@ -177,7 +177,7 @@ class FocusMonitorService : Service() {
 
         val notification = Notification.Builder(this, channelId)
             .setContentTitle("FocusBuddy is monitoring apps")
-            .setContentText("Blocking distractions")
+            .setContentText("Stay focused!")
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .build()
 

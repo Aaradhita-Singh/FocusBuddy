@@ -3,8 +3,9 @@ package com.focusbuddy.helper
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -17,38 +18,202 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
+
+    private val authenticators =
+        BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Only authenticate when MainActivity is actually CREATED.
+        authenticateForApp()
+    }
+
+    private fun authenticateForApp() {
+
+        showBiometricPrompt(
+            title = "Unlock FocusBuddy",
+            subtitle = "Verify your device credentials to continue",
+
+            onSuccess = {
+                showMainScreen()
+            },
+
+            onError = {
+                Toast.makeText(
+                    this,
+                    "FocusBuddy is locked.",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                finish()
+            }
+        )
+    }
+
+    private fun showBiometricPrompt(
+        title: String,
+        subtitle: String,
+        onSuccess: () -> Unit,
+        onError: () -> Unit
+    ) {
+
+        val biometricManager =
+            BiometricManager.from(this)
+
+        if (
+            biometricManager.canAuthenticate(authenticators)
+            != BiometricManager.BIOMETRIC_SUCCESS
+        ) {
+
+            Toast.makeText(
+                this,
+                "Please set up a phone screen lock to continue.",
+                Toast.LENGTH_LONG
+            ).show()
+
+            onError()
+            return
+        }
+
+        val executor =
+            ContextCompat.getMainExecutor(this)
+
+        val biometricPrompt =
+            BiometricPrompt(
+                this,
+                executor,
+                object : BiometricPrompt.AuthenticationCallback() {
+
+                    override fun onAuthenticationSucceeded(
+                        result: BiometricPrompt.AuthenticationResult
+                    ) {
+                        super.onAuthenticationSucceeded(result)
+
+                        onSuccess()
+                    }
+
+                    override fun onAuthenticationFailed() {
+                        super.onAuthenticationFailed()
+
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Authentication failed.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onAuthenticationError(
+                        errorCode: Int,
+                        errString: CharSequence
+                    ) {
+                        super.onAuthenticationError(
+                            errorCode,
+                            errString
+                        )
+
+                        onError()
+                    }
+                }
+            )
+
+        val promptInfo =
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle(title)
+                .setSubtitle(subtitle)
+                .setAllowedAuthenticators(authenticators)
+                .build()
+
+        biometricPrompt.authenticate(promptInfo)
+    }
+
+    private fun showMainScreen() {
+
         setContent {
+
             MainScreen(
-                onResetClick = { resetSavedApps() },
+
+                onResetClick = {
+                    authenticateForReset()
+                },
+
                 onChooseAppsClick = {
-                    startActivity(Intent(this, AppListActivity::class.java))
+
+                    startActivity(
+                        Intent(
+                            this,
+                            AppListActivity::class.java
+                        )
+                    )
                 }
             )
         }
     }
 
+    private fun authenticateForReset() {
+
+        showBiometricPrompt(
+
+            title = "End Focus Session?",
+
+            subtitle =
+                "Verify your device credentials to change FocusBuddy.",
+
+            onSuccess = {
+                resetSavedApps()
+            },
+
+            onError = {
+                Toast.makeText(
+                    this,
+                    "Focus session was not changed.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
+    }
+
     private fun resetSavedApps() {
-        val prefs = getSharedPreferences("focus_prefs", MODE_PRIVATE)
-        val savedApps = prefs.getStringSet("blocked_apps", emptySet())
+
+        val prefs =
+            getSharedPreferences(
+                "focus_prefs",
+                MODE_PRIVATE
+            )
+
+        val savedApps =
+            prefs.getStringSet(
+                "blocked_apps",
+                emptySet()
+            )
 
         if (savedApps.isNullOrEmpty()) {
+
             Toast.makeText(
                 this,
                 "No apps are currently selected.",
                 Toast.LENGTH_SHORT
             ).show()
+
             return
         }
 
-        // 1. Clear saved apps
-        prefs.edit().remove("blocked_apps").apply()
+        prefs.edit()
+            .remove("blocked_apps")
+            .remove("focus_end_time")
+            .apply()
 
-        stopService(Intent(this, FocusMonitorService::class.java))
+        stopService(
+            Intent(
+                this,
+                FocusMonitorService::class.java
+            )
+        )
 
         Toast.makeText(
             this,
@@ -56,7 +221,24 @@ class MainActivity : ComponentActivity() {
             Toast.LENGTH_SHORT
         ).show()
     }
+
+    /*
+     * IMPORTANT:
+     *
+     * When another Activity uses FLAG_ACTIVITY_SINGLE_TOP,
+     * Android sends the Intent here instead of creating
+     * another MainActivity.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
 }
+
+
+/* ------------------------------------------------ */
+/*                    MAIN SCREEN                   */
+/* ------------------------------------------------ */
 
 @Composable
 fun MainScreen(
