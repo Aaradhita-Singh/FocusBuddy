@@ -6,7 +6,9 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
+import android.widget.EditText
+import android.text.Editable
+import android.text.TextWatcher
 class AppListActivity : AppCompatActivity() {
 
     private lateinit var saveButton: Button
@@ -22,6 +24,38 @@ class AppListActivity : AppCompatActivity() {
         adapter = AppListAdapter(this)
 
         listView.adapter = adapter
+        val searchBar =
+            findViewById<EditText>(R.id.searchBar)
+
+        searchBar.addTextChangedListener(
+            object : TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    adapter.filterApps(
+                        s?.toString() ?: ""
+                    )
+                }
+
+                override fun afterTextChanged(
+                    s: Editable?
+                ) {
+                }
+            }
+        )
 
         saveButton.setOnClickListener {
 

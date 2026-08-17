@@ -13,59 +13,136 @@ import android.widget.TextView
 class AppListAdapter(private val context: Context) : BaseAdapter() {
 
     private val pm = context.packageManager
-    private val prefs = context.getSharedPreferences("focus_prefs", Context.MODE_PRIVATE)
 
-    // Load previously saved apps
-    private val selected = prefs
-        .getStringSet("blocked_apps", emptySet())
-        ?.toMutableSet() ?: mutableSetOf()
+    private val prefs =
+        context.getSharedPreferences(
+            "focus_prefs",
+            Context.MODE_PRIVATE
+        )
 
-    // Load + sort apps (selected first, exclude FocusBuddy)
-    private val apps: List<ApplicationInfo> =
+    // Apps that are currently selected
+    private val selected =
+        prefs.getStringSet(
+            "blocked_apps",
+            emptySet()
+        )?.toMutableSet() ?: mutableSetOf()
+
+    // All launchable apps
+    private val allApps: List<ApplicationInfo> =
         pm.getInstalledApplications(0)
             .filter {
                 pm.getLaunchIntentForPackage(it.packageName) != null &&
-                        it.packageName != context.packageName   // 🚫 exclude FocusBuddy
+                        it.packageName != context.packageName
             }
-            .sortedWith(
-                compareByDescending<ApplicationInfo> {
-                    selected.contains(it.packageName)
-                }.thenBy {
-                    pm.getApplicationLabel(it).toString().lowercase()
-                }
+            .sortedBy {
+                pm.getApplicationLabel(it)
+                    .toString()
+                    .lowercase()
+            }
+
+    // Apps currently being displayed
+    private var displayedApps: List<ApplicationInfo> =
+        allApps
+
+    override fun getCount(): Int =
+        displayedApps.size
+
+    override fun getItem(position: Int): Any =
+        displayedApps[position]
+
+    override fun getItemId(position: Int): Long =
+        position.toLong()
+
+    override fun getView(
+        position: Int,
+        convertView: View?,
+        parent: ViewGroup?
+    ): View {
+
+        val view =
+            convertView ?: LayoutInflater.from(context)
+                .inflate(
+                    R.layout.item_app,
+                    parent,
+                    false
+                )
+
+        val icon =
+            view.findViewById<ImageView>(
+                R.id.appIcon
             )
 
-    override fun getCount(): Int = apps.size
-    override fun getItem(position: Int): Any = apps[position]
-    override fun getItemId(position: Int): Long = position.toLong()
+        val name =
+            view.findViewById<TextView>(
+                R.id.appName
+            )
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view = convertView ?: LayoutInflater.from(context)
-            .inflate(R.layout.item_app, parent, false)
+        val checkBox =
+            view.findViewById<CheckBox>(
+                R.id.appCheckBox
+            )
 
-        val icon = view.findViewById<ImageView>(R.id.appIcon)
-        val name = view.findViewById<TextView>(R.id.appName)
-        val checkBox = view.findViewById<CheckBox>(R.id.appCheckBox)
+        val app =
+            displayedApps[position]
 
-        val app = apps[position]
+        icon.setImageDrawable(
+            pm.getApplicationIcon(
+                app.packageName
+            )
+        )
 
-        icon.setImageDrawable(pm.getApplicationIcon(app.packageName))
-        name.text = pm.getApplicationLabel(app)
+        name.text =
+            pm.getApplicationLabel(app)
 
-        // 🔥 Fix recycled checkbox bug
+        // Prevent recycled ListView rows from
+        // accidentally changing another checkbox.
         checkBox.setOnCheckedChangeListener(null)
-        checkBox.isChecked = selected.contains(app.packageName)
+
+        checkBox.isChecked =
+            selected.contains(
+                app.packageName
+            )
 
         checkBox.setOnCheckedChangeListener { _, isChecked ->
+
             if (isChecked) {
-                selected.add(app.packageName)
+                selected.add(
+                    app.packageName
+                )
             } else {
-                selected.remove(app.packageName)
+                selected.remove(
+                    app.packageName
+                )
             }
         }
 
         return view
     }
 
-    fun getSelectedApps(): List<String> = selected.toList()
+    fun filterApps(query: String) {
+
+        val search =
+            query.trim().lowercase()
+
+        displayedApps =
+            if (search.isEmpty()) {
+
+                allApps
+
+            } else {
+
+                allApps.filter { app ->
+
+                    pm.getApplicationLabel(app)
+                        .toString()
+                        .lowercase()
+                        .contains(search)
+                }
+            }
+
+        notifyDataSetChanged()
+    }
+
+    fun getSelectedApps(): List<String> =
+        selected.toList()
 }
