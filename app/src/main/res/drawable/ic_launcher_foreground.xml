@@ -1,30 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
+
+    <!-- Outer bullseye -->
     <path
         android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+        android:pathData="
+            M54,17
+            C74.43,17 91,33.57 91,54
+            C91,74.43 74.43,91 54,91
+            C33.57,91 17,74.43 17,54
+            C17,33.57 33.57,17 54,17
+            M54,22
+            C36.33,22 22,36.33 22,54
+            C22,71.67 36.33,86 54,86
+            C71.67,86 86,71.67 86,54
+            C86,36.33 71.67,22 54,22Z" />
+
+    <!-- Middle bullseye -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+            M54,29
+            C67.81,29 79,40.19 79,54
+            C79,67.81 67.81,79 54,79
+            C40.19,79 29,67.81 29,54
+            C29,40.19 40.19,29 54,29
+            M54,34
+            C42.95,34 34,42.95 34,54
+            C34,65.05 42.95,74 54,74
+            C65.05,74 74,65.05 74,54
+            C74,42.95 65.05,34 54,34Z" />
+
+    <!-- Inner ring -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="
+            M54,41
+            C61.18,41 67,46.82 67,54
+            C67,61.18 61.18,67 54,67
+            C46.82,67 41,61.18 41,54
+            C41,46.82 46.82,41 54,41
+            M54,46
+            C49.58,46 46,49.58 46,54
+            C46,58.42 49.58,62 54,62
+            C58.42,62 62,58.42 62,54
+            C62,49.58 58.42,46 54,46Z" />
+
+    <!-- Centered bold "fb" with black outline -->
+    <group
+        android:translateX="-4"
+        android:translateY="3">
+
+        <!-- f -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:strokeColor="#000000"
+            android:strokeWidth="2"
+            android:strokeLineJoin="round"
+            android:pathData="
+            M47,62
+            L47,51
+            L44,51
+            L44,47
+            L47,47
+            L47,44
+            C47,40 49.5,38 53,38
+            C54.5,38 56,38.5 57,39
+            L55.5,43
+            C55,42.7 54.5,42.5 54,42.5
+            C52.8,42.5 52,43.2 52,44.5
+            L52,47
+            L56,47
+            L56,51
+            L52,51
+            L52,62
+            Z" />
+
+        <!-- b -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:strokeColor="#000000"
+            android:strokeWidth="2"
+            android:strokeLineJoin="round"
+            android:pathData="
+            M57,39
+            L62,39
+            L62,47
+            C63,46.3 64.5,46 66,46
+            C70,46 73,49.2 73,54
+            C73,59 70,62 66,62
+            C64.3,62 62.8,61.5 61.5,60.5
+            L61.5,62
+            L57,62
+            Z
+            M65,50
+            C63.2,50 62,51.4 62,54
+            C62,56.6 63.2,58 65,58
+            C66.8,58 68,56.6 68,54
+            C68,51.4 66.8,50 65,50
+            Z" />
+
+    </group>
+
 </vector>
