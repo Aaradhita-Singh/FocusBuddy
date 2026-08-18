@@ -20,7 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
+import android.content.Context
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 class MainActivity : FragmentActivity() {
 
     private val authenticators =
@@ -55,6 +59,7 @@ class MainActivity : FragmentActivity() {
             }
         )
     }
+
 
     private fun showBiometricPrompt(
         title: String,
@@ -245,6 +250,52 @@ fun MainScreen(
     onResetClick: () -> Unit,
     onChooseAppsClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    var remainingTime by remember {
+        mutableLongStateOf(0L)
+    }
+
+    LaunchedEffect(Unit) {
+
+        while (true) {
+
+            val prefs =
+                context.getSharedPreferences(
+                    "focus_prefs",
+                    Context.MODE_PRIVATE
+                )
+
+            val endTime =
+                prefs.getLong(
+                    "focus_end_time",
+                    0L
+                )
+
+            val remaining =
+                endTime - System.currentTimeMillis()
+
+            remainingTime =
+                if (remaining > 0) {
+                    remaining
+                } else {
+                    0L
+                }
+
+            delay(1000)
+        }
+    }
+    val totalSeconds =
+        remainingTime / 1000
+
+    val hours =
+        totalSeconds / 3600
+
+    val minutes =
+        (totalSeconds % 3600) / 60
+
+    val seconds =
+        totalSeconds % 60
     val gradientStart = Color(0xFFFFA27C)
     val gradientEnd = Color(0xFF2575FC)
 
@@ -284,6 +335,46 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(64.dp))
 
+            if (remainingTime > 0) {
+
+                Spacer(
+                    modifier = Modifier.height(24.dp)
+                )
+
+                Text(
+                    text = "Focus session active",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
+
+                Text(
+                    text = String.format(
+                        "%02d:%02d:%02d",
+                        hours,
+                        minutes,
+                        seconds
+                    ),
+                    color = Color.White,
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "remaining",
+                    color = Color.White.copy(alpha = 0.8f),
+                    fontSize = 14.sp
+                )
+
+                Spacer(
+                    modifier = Modifier.height(24.dp)
+                )
+            }
+
             // Choose Apps Button
             Button(
                 onClick = onChooseAppsClick,
@@ -305,6 +396,8 @@ fun MainScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+
+
             // Reset Button
             Button(
                 onClick = onResetClick,
@@ -322,6 +415,7 @@ fun MainScreen(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
+
             }
         }
     }
