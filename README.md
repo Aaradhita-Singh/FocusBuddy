@@ -14,12 +14,11 @@ FocusBuddy is an app that can:
 + Block an app if it's on the block list
   and much more!
 
-## Implementation
-This repo contains all the needed code for the app. Just copy it all into a new project in Android Studio or download it using the APK. Then, turn the prerequisites on for the app, and you're ready to start using!
+## Installation
+The easiest way to install FocusBuddy is to download the latest APK from the Releases tab directly onto your Android device. However, you could also clone the repository into Android Studio, but this route requires some technical knowledge and the enabling of Dev Mode. 
 
 ### Device Prerequisites
-+ Dev Mode on **(only if you're not using the APK)**
-+ Accessibility allowances on (so FocusBuddy can see what you're doing and block accordingly)
++ Accessibility allowances on for FocusBuddy (so FocusBuddy can see what you're doing and block accordingly)
 + Notification allowances on for FocusBuddy (optional, but if you want to set timers, FocusBuddy notifies you when they're done) 
 
 ## How to Use
