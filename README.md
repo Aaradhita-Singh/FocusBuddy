@@ -14,14 +14,26 @@ FocusBuddy is an app that can:
 + Block an app if it's on the block list
   and much more!
 
-## Implementation
-This repo contains all the needed code for the app. Just copy it all into a new project in Android Studio! 
+## Installation
+The easiest way to install FocusBuddy is to download the latest APK from the Releases tab directly onto your Android device. However, you could also clone the repository into Android Studio, but this route requires some technical knowledge and the enabling of Dev Mode. 
 
-However, there a few prerequisites: 
 ### Device Prerequisites
-+ Dev Mode on
-+ Accessibility allowances on
-+ Notification allowances on for FocusBuddy
++ Accessibility allowances on for FocusBuddy (so FocusBuddy can see what you're doing and block accordingly)
++ Notification allowances on for FocusBuddy (optional, but if you want to set timers, FocusBuddy notifies you when they're done) 
 
 ## How to Use
-The app is simple to use. There's two buttons on the homepage
+### Select your Apps
++ Use the **top button** to open a list of your apps
++ Use the **search bar** or **alphabetized list** to find your desired apps
++ Select your desired apps
+### Set your Timer (optional)
++ If you'd like to set a **timer**, use the Yes button on the next page (No button will automatically start your session and you have to end it manually) 
++ Use the scroll wheels to select a time (minimum of **1 second**, maximum of **5 hours, 59 minutes, and 59 seconds**)
++ Save your timer
++ On the homescreen, there will be a **countdown** showing how long you have left on your timer
++ Once the timer is finished, you'll get a notification
+### Ending Your Session
++ Use the **bottom button** on your homepage to end any session, timed or not
+### Security and User Friction
++ To enter the application, a user must enter the phone password or biometrics. This ensures security and privacy if you're loaning your phone to someone else.
++ To end a session using the bottom button, the password must be entered again. This is because it gives the user a chance to think about ending their session.
