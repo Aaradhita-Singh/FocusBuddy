@@ -15,7 +15,7 @@ FocusBuddy is an app that can:
   and much more!
 
 ## Installation
-The easiest way to install FocusBuddy is to download the latest APK from the Releases tab directly onto your Android device. However, you could also clone the repository into Android Studio, but this route requires some technical knowledge and the enabling of Dev Mode. 
+The easiest way to install FocusBuddy is to download the latest APK from the Releases tab directly onto your Android device (you'll need to pause Play Protect and allow apps to be downloaded from Google (developer promises that this isn't malware)). However, you could also clone the repository into Android Studio, but this route requires some technical knowledge and the enabling of Dev Mode. 
 
 ### Device Prerequisites
 + Accessibility allowances on for FocusBuddy (so FocusBuddy can see what you're doing and block accordingly)
