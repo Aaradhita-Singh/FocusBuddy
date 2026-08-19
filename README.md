@@ -15,12 +15,26 @@ FocusBuddy is an app that can:
   and much more!
 
 ## Implementation
-This repo contains all the needed code for the app. Just copy it all into a new project in Android Studio or download it using the APK! Then, turn the prerequisites on for the app, and you're ready to start using!
+This repo contains all the needed code for the app. Just copy it all into a new project in Android Studio or download it using the APK. Then, turn the prerequisites on for the app, and you're ready to start using!
 
 ### Device Prerequisites
-+ Dev Mode on (only if you're not using the APK)
++ Dev Mode on **(only if you're not using the APK)**
 + Accessibility allowances on (so FocusBuddy can see what you're doing and block accordingly)
 + Notification allowances on for FocusBuddy (optional, but if you want to set timers, FocusBuddy notifies you when they're done) 
 
 ## How to Use
-The app is simple to use. There's two buttons on the homepage, the top one for selecting apps to block and the bottom one for clearing your selections. Clicking the top one takes you to a page containing all of your apps, and you can use the alphabetized list or the search bar to find apps. Then, after you're done with those, the next screen will prompt you for a timer. If you click no, then your session will start and you can decide when to clear your list. If you select yes, you'll be taken to a timer screen where you can choose a timer up to 5 hours, 59 minutes and 59 seconds. Then, if you've set a timer, a countdown will show up on the front page, paired with a notification at the end of the timer.  
+### Select your Apps
++ Use the **top button** to open a list of your apps
++ Use the **search bar** or **alphabetized list** to find your desired apps
++ Select your desired apps
+### Set your Timer (optional)
++ If you'd like to set a **timer**, use the Yes button on the next page (No button will automatically start your session and you have to end it manually) 
++ Use the scroll wheels to select a time (minimum of **1 second**, maximum of **5 hours, 59 minutes, and 59 seconds**)
++ Save your timer
++ On the homescreen, there will be a **countdown** showing how long you have left on your timer
++ Once the timer is finished, you'll get a notification
+### Ending Your Session
++ Use the **bottom button** on your homepage to end any session, timed or not
+### Security and User Friction
++ To enter the application, a user must enter the phone password or biometrics. This ensures security and privacy if you're loaning your phone to someone else.
++ To end a session using the bottom button, the password must be entered again. This is because it gives the user a chance to think about ending their session.
