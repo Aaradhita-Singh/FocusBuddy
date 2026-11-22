@@ -3,31 +3,38 @@
     android:orientation="vertical"
     android:padding="20dp"
     android:layout_width="match_parent"
+    android:background="@drawable/bg_gradient"
     android:layout_height="match_parent">
+
 
     <EditText
         android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search apps..."
+        android:textColorHint="#FFFFFF"
+        android:textColor="#FFFFFF"
         android:inputType="text"
         android:singleLine="true"
         android:padding="12dp"
         android:layout_marginBottom="12dp"
-        android:background="@drawable/bg_search_bar"
+        android:background="@drawable/bg_picker_container"
         android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawableTint="#CCFFFFFF"
         android:drawablePadding="8dp" />
 
     <ListView
         android:id="@+id/appListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="@drawable/bg_picker_container"/>
 
     <Button
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background = "@drawable/bg_rounded_button"
         android:text="Save Selected Apps"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="40dp" />

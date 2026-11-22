@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="32dp">
+    android:padding="32dp"
+    android:background="@drawable/bg_gradient">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Would you like to set a timer?"
+        android:textColor="#FFFFFF"
         android:textSize="26sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -22,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="Yes, please"
+        android:background="@drawable/bg_rounded_button"
         android:textSize="18sp"/>
 
     <Space
@@ -33,6 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="No, thanks"
+        android:background="@drawable/bg_rounded_button"
         android:textSize="18sp"/>
 
 </LinearLayout>

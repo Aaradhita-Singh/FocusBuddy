@@ -34,9 +34,13 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Only authenticate when MainActivity is actually CREATED.
-        authenticateForApp()
+        if (intent.getBooleanExtra("from_blocked", false)) {
+            showMainScreen()
+        } else {
+            authenticateForApp()
+        }
     }
+
 
     private fun authenticateForApp() {
 

@@ -17,6 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import android.content.Intent
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
+
 
 class BlockedActivity : ComponentActivity() {
 
@@ -30,7 +35,9 @@ class BlockedActivity : ComponentActivity() {
 
 @Composable
 fun BlockedScreen() {
-    // Modern gradient colors (Deep Purple to Blue)
+    val context = LocalContext.current
+
+    // FocusBuddy signature coral-to-blue gradient
     val gradientStart = Color(0xFFFFA27C)
     val gradientEnd = Color(0xFF2575FC)
 
@@ -51,7 +58,7 @@ fun BlockedScreen() {
             verticalArrangement = Arrangement.Center
         ) {
 
-            // Icon Container
+            // Translucent Lock Badge
             Surface(
                 modifier = Modifier.size(120.dp),
                 shape = CircleShape,
@@ -85,6 +92,61 @@ fun BlockedScreen() {
                 color = Color.White.copy(alpha = 0.9f),
                 textAlign = TextAlign.Center
             )
+
+
+            Spacer(modifier = Modifier.height(72.dp))
+
+            // Action: Return directly to FocusBuddy home screen
+            Button(
+                onClick = {
+                    val intent = Intent(context, MainActivity::class.java).apply {
+                        putExtra("from_blocked", true)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    }
+                    context.startActivity(intent)
+                    (context as? ComponentActivity)?.finish()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color(0xFF2575FC)
+                )
+            ) {
+                Text(
+                    text = "Back to FocusBuddy",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            //Action: Return to phone home screen
+
+            Spacer(modifier = Modifier.height(14.dp))
+            Button(
+                onClick = {
+                    val homeIntent = Intent(Intent.ACTION_MAIN).apply {
+                        addCategory(Intent.CATEGORY_HOME)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    context.startActivity(homeIntent)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White.copy(alpha = 0.22f),
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = "Back to Home Screen",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }

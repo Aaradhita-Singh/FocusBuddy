@@ -54,7 +54,7 @@ class FocusMonitorService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("FOCUS_DEBUG", "onStartCommand CALLED")
         startMonitoringLoop()
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     private fun startMonitoringLoop() {
@@ -112,12 +112,8 @@ class FocusMonitorService : Service() {
                     stopSelf()
                     return
                 }
-
                 checkForegroundApp()
-
-                handler.postDelayed(this, 700)
-                checkForegroundApp()
-                handler.postDelayed(this, 700)
+                handler.postDelayed(this, 300)
             }
         }
 

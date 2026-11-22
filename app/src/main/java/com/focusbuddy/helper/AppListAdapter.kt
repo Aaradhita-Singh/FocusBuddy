@@ -9,7 +9,8 @@ import android.widget.BaseAdapter
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
-
+import android.graphics.Color
+import android.content.res.ColorStateList
 class AppListAdapter(private val context: Context) : BaseAdapter() {
 
     private val pm = context.packageManager
@@ -88,35 +89,35 @@ class AppListAdapter(private val context: Context) : BaseAdapter() {
         icon.setImageDrawable(
             pm.getApplicationIcon(
                 app.packageName
+
             )
         )
 
-        name.text =
-            pm.getApplicationLabel(app)
+        name.text = pm.getApplicationLabel(app)
+        name.setTextColor(Color.WHITE)
 
         // Prevent recycled ListView rows from
         // accidentally changing another checkbox.
         checkBox.setOnCheckedChangeListener(null)
+        checkBox.buttonTintList = ColorStateList.valueOf(Color.WHITE)
 
-        checkBox.isChecked =
-            selected.contains(
-                app.packageName
-            )
+        checkBox.isChecked = selected.contains(app.packageName)
 
         checkBox.setOnCheckedChangeListener { _, isChecked ->
-
             if (isChecked) {
-                selected.add(
-                    app.packageName
-                )
+                selected.add(app.packageName)
             } else {
-                selected.remove(
-                    app.packageName
-                )
+                selected.remove(app.packageName)
             }
         }
 
+        // Let users tap anywhere on the row to toggle
+        view.setOnClickListener {
+            checkBox.isChecked = !checkBox.isChecked
+        }
+
         return view
+
     }
 
     fun filterApps(query: String) {

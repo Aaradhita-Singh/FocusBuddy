@@ -25,7 +25,6 @@ class FocusBlockerService : AccessibilityService() {
         // Check if package is blocked
         if (pkg in FocusSettings.blockedApps) {
             Log.d("FOCUS_DEBUG", "BLOCKING app via Accessibility: $pkg")
-
             // Redirect user to BlockedActivity
             val intent = Intent(this, BlockedActivity::class.java)
             intent.addFlags(
